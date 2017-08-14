@@ -3,6 +3,8 @@ const UserController = require('./controllers/user');
 const ChatController = require('./controllers/chat');
 const CommunicationController = require('./controllers/communication');
 const StripeController = require('./controllers/stripe');
+const ArticleController = require('./controllers/article');
+
 const express = require('express');
 const passport = require('passport');
 const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
@@ -23,6 +25,7 @@ module.exports = function (app) {
     userRoutes = express.Router(),
     chatRoutes = express.Router(),
     payRoutes = express.Router(),
+    articleRoute =  express.Router(),
     communicationRoutes = express.Router();
 
   //= ========================
@@ -112,6 +115,14 @@ module.exports = function (app) {
 
   // Send email from contact form
   communicationRoutes.post('/contact', CommunicationController.sendContactForm);
+
+  //= ========================
+  // Article Routes
+  //= ========================
+
+  apiRoutes.use('/articles', articleRoute);
+
+  articleRoute.get('/', requireAuth, ArticleController.getArticles);
 
   // Set url for API group routes
   app.use('/api', apiRoutes);

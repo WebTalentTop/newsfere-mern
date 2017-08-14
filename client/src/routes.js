@@ -29,6 +29,9 @@ import BillingSettings from './components/billing/settings';
 import InitialCheckout from './components/billing/initial-checkout';
 
 // Import admin pages
+import ArticleList from './components/article/article-list';
+
+// Import Article pages
 import AdminDashboard from './components/admin/dashboard';
 
 // Import higher order components
@@ -36,7 +39,7 @@ import RequireAuth from './components/auth/require_auth';
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={HomePage} />
+    <IndexRoute component={ArticleList} />
     <Route path="contact-us" component={ContactPage} />
     <Route path="component-samples" component={RequireAuth(ComponentSamplesPage)} />
     <Route path="register" component={Register} />
@@ -51,6 +54,7 @@ export default (
     <Route path="profile" component={RequireAuth(ViewProfile)} />
 
     <Route path="admin" component={RequireAuth(AdminDashboard)} />
+    <Route path="articles" component={RequireAuth(ArticleList)} />
 
     <Route path="dashboard">
       <IndexRoute component={RequireAuth(Dashboard)} />
