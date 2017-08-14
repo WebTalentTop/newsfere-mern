@@ -60,19 +60,7 @@ class ArticleList extends Component {
           </div>
       );
     });
-    // var names = [JSON.stringify(articles[0]), 'Jon', 'Thruster'];
-    //     var namesList = names.map(function(name){
-    //                     return <li>{name}</li>;
-    //                   })
-    
-    // const b;
-    // for (let i=0; i<articles.length; i++) {
-    //   b=JSON.stringify(articles[i])
-    // }
-    
-    // var aNiceObject = JSON.parse(fixedJSON);
     return (
-
       <div className="row">{ articleList }</div>
     );
   }
