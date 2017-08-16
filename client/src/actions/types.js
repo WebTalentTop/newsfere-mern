@@ -43,4 +43,5 @@ export const CREATE_CUSTOMER = 'create_customer',
 // Article Actions
 //= =====================
 export const FETCH_ARTICLES = 'fetch_articles',
+  VOTE_ARTICLE = 'vote_aritcle',
   ARTICLE_ERROR = 'article_error';
