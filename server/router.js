@@ -20,13 +20,13 @@ const requireLogin = passport.authenticate('local', { session: false });
 
 module.exports = function (app) {
   // Initializing route groups
-  const apiRoutes = express.Router(),
-    authRoutes = express.Router(),
-    userRoutes = express.Router(),
-    chatRoutes = express.Router(),
-    payRoutes = express.Router(),
-    articleRoute =  express.Router(),
-    communicationRoutes = express.Router();
+  const apiRoutes = express.Router();
+  const authRoutes = express.Router();
+  const userRoutes = express.Router();
+  const chatRoutes = express.Router();
+  const payRoutes = express.Router();
+  const articleRoute = express.Router();
+  const communicationRoutes = express.Router();
 
   //= ========================
   // Auth Routes
@@ -123,6 +123,7 @@ module.exports = function (app) {
   apiRoutes.use('/articles', articleRoute);
 
   articleRoute.get('/', requireAuth, ArticleController.getArticles);
+  articleRoute.put('/vote', requireAuth, ArticleController.voteArticle);
 
   // Set url for API group routes
   app.use('/api', apiRoutes);

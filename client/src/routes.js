@@ -39,7 +39,7 @@ import RequireAuth from './components/auth/require_auth';
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={ArticleList} />
+    <IndexRoute component={HomePage} />
     <Route path="contact-us" component={ContactPage} />
     <Route path="component-samples" component={RequireAuth(ComponentSamplesPage)} />
     <Route path="register" component={Register} />
@@ -54,7 +54,7 @@ export default (
     <Route path="profile" component={RequireAuth(ViewProfile)} />
 
     <Route path="admin" component={RequireAuth(AdminDashboard)} />
-    <Route path="articles" component={RequireAuth(ArticleList)} />
+    <Route path="articles" component={ArticleList} />
 
     <Route path="dashboard">
       <IndexRoute component={RequireAuth(Dashboard)} />
