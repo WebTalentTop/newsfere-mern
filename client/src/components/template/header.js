@@ -13,6 +13,9 @@ class HeaderTemplate extends Component {
           <Link to="dashboard">Dashboard</Link>
         </li>,
         <li key={`${3}header`}>
+          <Link to="contact-us">Contact Us</Link>
+        </li>,
+        <li key={`${4}header`}>
           <Link to="logout">Logout</Link>
         </li>,
       ];
@@ -27,6 +30,9 @@ class HeaderTemplate extends Component {
         </li>,
         <li key={3}>
           <Link to="register">Register</Link>
+        </li>,
+        <li key={4}>
+          <Link to="contact-us">Contact Us</Link>
         </li>,
       ];
     }

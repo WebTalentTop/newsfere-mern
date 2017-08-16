@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import ArticleList from '../article/article-list';
 
 class HomePage extends Component {
   render() {
     return (
-      <div>Hello world! This is the home page route.</div>
+      <ArticleList />
     );
   }
 }
