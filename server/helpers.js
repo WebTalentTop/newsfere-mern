@@ -15,6 +15,17 @@ exports.setUserInfo = function setUserInfo(request) {
 
   return getUserInfo;
 };
+exports.setArticleInfo = function setArticleInfo(request) {
+  const getArticleInfo = {
+    _id: request._id,
+    title: request.title,
+    pubdate: request.pubdate,
+    link: request.link,
+    mediaImageURL: request.mediaImageURL
+  };
+
+  return getArticleInfo;
+}
 
 exports.getRole = function getRole(checkRole) {
   let role;
