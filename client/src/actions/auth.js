@@ -16,7 +16,8 @@ export function loginUser({ email, password }) {
       cookie.save('token', response.data.token, { path: '/' });
       cookie.save('user', response.data.user, { path: '/' });
       dispatch({ type: AUTH_USER });
-      window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
+      // window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
+      browserHistory.push(`${CLIENT_ROOT_URL}/dashboard`);
     })
     .catch((error) => {
       errorHandler(dispatch, error.response, AUTH_ERROR);
