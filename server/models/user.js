@@ -31,16 +31,10 @@ const UserSchema = new Schema({
     enum: [ROLE_MEMBER, ROLE_CLIENT, ROLE_OWNER, ROLE_ADMIN],
     default: ROLE_MEMBER
   },
-  stripe: {
-    customerId: { type: String },
-    subscriptionId: { type: String },
-    lastFour: { type: String },
-    plan: { type: String },
-    activeUntil: { type: Date }
-  },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   totalNumberViews: Number,
+  totalNumberVotes: Number,
   totalNumberSensationalVotes: Number,
   totalNumberFactualVotes: Number,
   articlesVoted: [],
