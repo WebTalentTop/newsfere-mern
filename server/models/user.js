@@ -39,7 +39,12 @@ const UserSchema = new Schema({
     activeUntil: { type: Date }
   },
   resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date }
+  resetPasswordExpires: { type: Date },
+  totalNumberViews: Number,
+  totalNumberSensationalVotes: Number,
+  totalNumberFactualVotes: Number,
+  articlesVoted: [],
+  articlesRead: []
 },
   {
     timestamps: true
