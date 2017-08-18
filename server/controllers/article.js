@@ -59,7 +59,6 @@ exports.getArticles = function (req1, res1, next) {
           }
         }
       }
-      
       const singleArticle = {
         title: item.title,
         link: item.link,
@@ -71,6 +70,7 @@ exports.getArticles = function (req1, res1, next) {
       item = stream.read();
     }
     if (count === 40) {
+      console.log(articlesToReturn);
       return res1.status(200).json({ articles: articlesToReturn }); 
     }
   });
@@ -78,12 +78,13 @@ exports.getArticles = function (req1, res1, next) {
 exports.voteArticle = function (req, res, next) {
   const article = req.body;
   const user = article.profile;
+  let articleCounterToSave = {};
+  let usersRead = [];
+  let usersVotedSensational = [];
+  let usersVotedFactual = [];
   // Article Couter Store
   ArticleCounter.findOne({ articleID: article._id }, (err, foundArticleCounter) => {
-    let articleCounterToSave = {};
-    let usersRead = [];
-    let usersVotedSensational = [];
-    let usersVotedFactual = [];
+
     if (foundArticleCounter !== null) {
       // The article viewed or voted at least once exists
       const posUserRead = foundArticleCounter.usersRead.indexOf(user._id);
@@ -114,15 +115,20 @@ exports.voteArticle = function (req, res, next) {
     articleCounterToSave.usersRead = usersRead;
     articleCounterToSave.usersVotedSensational = usersVotedSensational;
     articleCounterToSave.usersVotedFactual = usersVotedFactual;
-    articleCounterToSave.totalNumberViews = usersRead.length;
-    articleCounterToSave.totalNumberSensationalVotes = usersVotedSensational.length;
-    articleCounterToSave.totalNumberFactualVotes = usersVotedFactual.length;
-    articleCounterToSave.totalNumberVotes =
-    parseInt(usersVotedFactual.length + usersVotedSensational.length, 10);
-    console.log(articleCounterToSave);
+
     ArticleCounter.update({ articleID: article._id }, articleCounterToSave, { upsert: true },
       (error, found) => {
       });
+    Article.findById(article._id, (err, foundArticle) => {
+      const articleToSave = setArticleInfo(article);
+      articleToSave.totalNumberViews = usersRead.length;
+      articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
+      articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
+      articleToSave.totalNumberVotes =
+      parseInt(usersVotedFactual.length + usersVotedSensational.length, 10);
+      Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
+      });
+    });
   });
 
   User.findById(user._id, (err, foundUser) => {
@@ -140,22 +146,31 @@ exports.voteArticle = function (req, res, next) {
       userInfo.totalNumberViews = userInfo.articlesRead.length;
       userInfo.totalNumberVotes = userInfo.articlesVoted.length;
     }
-    console.log(userInfo);
+    
     User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
-      res.status(201).json({
-        user: userInfo
-      });
     });
   });
 
-  Article.findById(article._id, (err, foundArticle) => {
-    const articleToSave = setArticleInfo(article);
-    Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
-      // res.status(201).json({
-      //   article: articleToSave
-      // });
-    });
-  });
+  
 };
-
+exports.getReadVoted = function (req, res, next) {
+  const userID = req.params.userID;
+  const articlesToReturn = [];
+  User.findById(userID, (err, foundUser) => {
+    if (foundUser) {
+      if (foundUser.articlesRead) {
+        let readCount = 0;
+        foundUser.articlesRead.forEach((singleArticleID) => {
+          Article.findById(singleArticleID, (err, foundArticle) => {
+            readCount += 1;
+            articlesToReturn.push(foundArticle);
+            if (readCount === foundUser.articlesRead.length) {
+              return res.status(200).json({ articles: articlesToReturn });
+            }
+          });
+        });
+      }
+    }
+  });
+}
 
