@@ -39,9 +39,10 @@ export const CREATE_CUSTOMER = 'create_customer',
   BILLING_ERROR = 'billing_error',
   CHANGE_SUBSCRIPTION = 'change_subscription';
 
-  //= =====================
+//= =====================
 // Article Actions
 //= =====================
 export const FETCH_ARTICLES = 'fetch_articles',
+  FETCH_READ_VOTED_ARTICLES = 'fetch_read_voted_articles',
   VOTE_ARTICLE = 'vote_aritcle',
   ARTICLE_ERROR = 'article_error';
