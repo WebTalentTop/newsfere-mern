@@ -30,6 +30,7 @@ import InitialCheckout from './components/billing/initial-checkout';
 
 // Import admin pages
 import ArticleList from './components/article/article-list';
+import UserArticle from './components/article/user-article';
 
 // Import Article pages
 import AdminDashboard from './components/admin/dashboard';
@@ -58,6 +59,7 @@ export default (
 
     <Route path="dashboard">
       <IndexRoute component={RequireAuth(Dashboard)} />
+      <Route path="articles" component={UserArticle} />
       <Route path="inbox" component={RequireAuth(Inbox)} />
       <Route path="conversation/new" component={RequireAuth(ComposeMessage)} />
       <Route path="conversation/view/:conversationId" component={RequireAuth(Conversation)} />

@@ -49,7 +49,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div>
-        <Link to="/dashboard/inbox">Inbox</Link> | <Link to="/profile/edit">Edit Profile</Link> | <Link to="/billing/settings">Billing</Link>
+        <Link to="/dashboard/articles">Articles</Link> | <Link to="/dashboard/inbox">Inbox</Link> | <Link to="/profile/edit">Edit Profile</Link> | <Link to="/billing/settings">Billing</Link>
         {this.isRole('Admin', this.adminMenu())}
         {this.isRole('Owner', this.ownerMenu())}
         {this.isRole('Client', this.clientMenu())}
