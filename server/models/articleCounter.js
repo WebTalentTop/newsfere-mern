@@ -7,10 +7,6 @@ const ArticleCounterSchema = new Schema({
   usersRead: [],
   usersVotedSensational: [],
   usersVotedFactual: [],
-  totalNumberViews: Number,
-  totalNumberVotes: Number,
-  totalNumberSensationalVotes: Number,
-  totalNumberFactualVotes: Number
 });
 
 module.exports = mongoose.model('ArticleCounter', ArticleCounterSchema);

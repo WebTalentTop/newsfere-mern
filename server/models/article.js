@@ -9,7 +9,11 @@ const ArticleSchema = new Schema({
   pubdate: String,
   link: String,
   contentText: String,
-  mediaImageURL: String
+  mediaImageURL: String,
+  totalNumberViews: Number,
+  totalNumberVotes: Number,
+  totalNumberSensationalVotes: Number,
+  totalNumberFactualVotes: Number,
 },
   {
     timestamps: true // Saves createdAt and updatedAt as dates. createdAt will be our timestamp.
