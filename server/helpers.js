@@ -19,8 +19,11 @@ exports.setArticleInfo = function setArticleInfo(request) {
   const getArticleInfo = {
     _id: request._id,
     title: request.title,
+    summary: request.summary,
+    description: request.description,
     pubdate: request.pubdate,
     link: request.link,
+    result: request.result,
     mediaImageURL: request.mediaImageURL
   };
 
