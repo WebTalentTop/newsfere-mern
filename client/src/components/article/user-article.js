@@ -63,8 +63,6 @@ class UserArticle extends Component {
     this.setState({ isModalOpen: false });
   }
   render() {
-    console.log(this.props.articles);
-    
     const { articles } = this.props;
     const { isModalOpen, selectedArticle, isToggled } = this.state;
     const articleList = articles.map((article, index) => {

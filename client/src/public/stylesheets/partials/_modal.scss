@@ -1,12 +1,13 @@
 .modal {
-    display: none;
     position: fixed;
+    display: none;
     z-index: 99;
     left: 0;
     top: 0;
-    width: 100%;
+    width: 0px;
     height: 100%;
     overflow: auto;
+    background: rgba(0,0,0,.3);
    
     &-container {
       position: relative;
@@ -20,9 +21,9 @@
       padding: 20px;
       min-width: 450px;
       position: absolute;
-      top: 50%;
+      top: 20%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      margin-left: -225px;
       border: none;
       -webkit-box-shadow: 1px 1px 20px 0px rgba(150, 150, 150, 1);
       -moz-box-shadow:    1px 1px 20px 0px rgba(150, 150, 150, 1);
@@ -52,5 +53,6 @@
 
     &.is-open {
       display: block;
+      width: 100%;
     }
 }

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import cookie from 'react-cookie';
 import SwitchButton from 'react-switch-button';
 import styled from 'styled-components';
+import Slider from 'react-slick';
 import Modal from '../template/modal';
 import * as actions from '../../actions/article';
 
@@ -37,6 +38,20 @@ const ArticleItem = styled.div`{
     }
   }
 }
+`;
+const SwiperContainer = styled.div`{
+    width: 450px;
+    padding: 20px;
+    background: red;
+    text-align: center;
+    color: white;
+  }
+`;
+const NextArrow = styled.div`{
+
+    padding: 20px;
+
+  }
 `;
 class ArticleList extends Component {
   state = {
@@ -82,6 +97,13 @@ class ArticleList extends Component {
   render() {
     const { articles } = this.props;
     const { isModalOpen, selectedArticle, isToggled } = this.state;
+    const sliderSettings = {
+      infinite: false,
+      speed: 500,
+      slidesToShow: 1,
+      initialSlide: 1,
+      slidesToScroll: 1
+    };
     const articleList = articles.map((article, index) => {
       return (
           <div className="col-sm-4" onClick={()=> this.openModal(article)}>
@@ -114,6 +136,13 @@ class ArticleList extends Component {
             labelLeft="Sensationalized"
             onChange={this.handleSwitch}
           />
+          <SwiperContainer>
+          <Slider {...sliderSettings}>
+            <div>Slide 1</div>
+            <div>Slide 2</div>
+            <div>Slide 3</div>
+          </Slider>
+          </SwiperContainer>
           <br />
           <br />
           <button onClick={this.OnVote}>Vote now </button>
