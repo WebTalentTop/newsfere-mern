@@ -45,6 +45,8 @@ const UserSchema = new Schema({
   totalNumberSensationalVotes: Number,
   totalNumberFactualVotes: Number,
   articlesVoted: [],
+  articlesVotedSensational: [],
+  articlesVotedFactual: [],
   articlesRead: []
 },
   {
