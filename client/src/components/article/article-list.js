@@ -50,8 +50,7 @@ class ArticleList extends Component {
   }
   openModal = (article) => {
     this.setState({ isModalOpen: true });
-    let articleTemp = Object.assign({}, this.state.selectedArticle);
-    articleTemp = article;
+    const articleTemp = Object.assign({}, article);
     this.setState({ selectedArticle: articleTemp });
   }
   closeModal = () => {
@@ -102,16 +101,17 @@ class ArticleList extends Component {
       <div className="row">
         { articleList }
         <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading="Voting">
-          <div> { selectedArticle.title } </div>
-          <br />
-          <div> { selectedArticle.pubdate } </div>
+          <div> { selectedArticle.title } <br /></div>
+          <div> { selectedArticle.pubdate } <br /></div>
+          <div> { selectedArticle.summary } <br /></div>
+          <div> { selectedArticle.description } <br /></div>
           <br />
           <SwitchButton 
             name="switch-8"
             label="Switch mode"
             mode="select"
             labelRight="Factual"
-            label="Sensationalized"
+            labelLeft="Sensationalized"
             onChange={this.handleSwitch}
           />
           <br />

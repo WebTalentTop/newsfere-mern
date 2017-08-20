@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import cookie from 'react-cookie';
 import styled from 'styled-components';
+import SwitchButton from 'react-switch-button';
 import Modal from '../template/modal';
 import * as actions from '../../actions/article';
 
@@ -41,20 +42,29 @@ class UserArticle extends Component {
   state = {
     isModalOpen: false,
     selectedArticle: {},
+    isToggled: false,
   }
   componentWillMount() {
     // Fetch user data prior to component mounting
     const user = cookie.load('user');
     this.props.fetchReadVotedArticles(user._id);
+  }
+  componentDidMount() {
 
   }
   openModal = (article) => {
+    const { articles } = this.props;
+    const { selectedArticle } = this.state;
+    this.setState({ isModalOpen: true });
+    let articleTemp = Object.assign({}, article);
+    this.setState({ selectedArticle: articleTemp });
   }
   closeModal = () => {
     this.setState({ isModalOpen: false });
   }
-  
   render() {
+    console.log(this.props.articles);
+    
     const { articles } = this.props;
     const { isModalOpen, selectedArticle, isToggled } = this.state;
     const articleList = articles.map((article, index) => {
@@ -80,7 +90,24 @@ class UserArticle extends Component {
       <div className="row">
         { articleList }
         <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading="Voting">
-          123
+          <div> { selectedArticle.title } <br /></div>
+          <div> { selectedArticle.pubdate } <br /></div>
+          <div> { selectedArticle.summary } <br /></div>
+          <div> { selectedArticle.description } <br /></div>
+          <div> You voted as { selectedArticle.result === 1 ? "Factual":"Sensational" }<br /></div>
+          
+          <br />
+          <SwitchButton
+            name="switch-8"
+            label="Switch mode"
+            mode="select"
+            labelRight="Factual"
+            labelLeft="Sensationalized"
+            onChange={this.handleSwitch}
+          />
+          <br />
+          <br />
+          <button onClick={this.OnVote}>Vote now </button>
         </Modal>
       </div>
     );
