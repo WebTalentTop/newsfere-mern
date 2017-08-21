@@ -40,24 +40,49 @@ const ArticleItem = styled.div`{
 }
 `;
 const SwiperContainer = styled.div`{
-    width: 450px;
-    padding: 20px;
-    background: red;
+    width: 410px;
     text-align: center;
     color: white;
   }
 `;
-const NextArrow = styled.div`{
-
-    padding: 20px;
-
+const BoardSlider = styled.div`{
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    padding:  10px;
+    & > div {
+      padding: 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    & > .FactualBoard {
+      background: #8bc34a;
+      -webkit-box-shadow: 0px 0px 10px 0px rgba(124, 179, 66, .7);
+      -moz-box-shadow:    0px 0px 10px 0px rgba(124, 179, 66, .7);
+      box-shadow:         0px 0px 10px 0px rgba(124, 179, 66, .7);
+    }
+    & > .SensationalizedBoard {
+      background: #ffc107;
+      -webkit-box-shadow: 0px 0px 10px 0px rgba(255, 179, 0, .7);
+      -moz-box-shadow:    0px 0px 10px 0px rgba(255, 179, 0, .7);
+      box-shadow:         0px 0px 10px 0px rgba(255, 179, 0, .7);
+    }
+    & > .NotVotedBoard {
+      background: #03a9f4;
+      -webkit-box-shadow: 0px 0px 10px 0px rgba(15, 101, 212, .7);
+      -moz-box-shadow:    0px 0px 10px 0px rgba(15, 101, 212, .7);
+      box-shadow:         0px 0px 10px 0px rgba(15, 101, 212, .7);
+    }
   }
 `;
+
 class ArticleList extends Component {
   state = {
     isModalOpen: false,
     selectedArticle: {},
     isToggled: false,
+    votingResult: 0,
   }
   componentWillMount() {
     // Fetch user data prior to component mounting
@@ -80,8 +105,9 @@ class ArticleList extends Component {
     this.setState({ isToggled: !this.state.isToggled });
   }
   OnVote = () => {
-    const { selectedArticle, isToggled } = this.state;
+    const { selectedArticle, isToggled, votingResult } = this.state;
     const user = cookie.load('user'); 
+    console.log(votingResult);
     const votedArticle = {
       profile: user,
       _id: this.helperEncoding(selectedArticle.title),
@@ -89,20 +115,23 @@ class ArticleList extends Component {
       pubdate: selectedArticle.pubdate,
       mediaImageURL: selectedArticle.mediaImageURL,
       link: selectedArticle.link,
-      voted: isToggled
+      voted: votingResult
     }
     this.props.voteArticle(votedArticle);
   }
-  
+  afterChange = (cur) => {
+    this.setState({ votingResult: cur-1 });
+  }
   render() {
     const { articles } = this.props;
-    const { isModalOpen, selectedArticle, isToggled } = this.state;
+    const { isModalOpen, selectedArticle, isToggled, votingResult } = this.state;
     const sliderSettings = {
       infinite: false,
       speed: 500,
       slidesToShow: 1,
       initialSlide: 1,
-      slidesToScroll: 1
+      slidesToScroll: 1,
+      afterChange: this.afterChange
     };
     const articleList = articles.map((article, index) => {
       return (
@@ -138,9 +167,9 @@ class ArticleList extends Component {
           />
           <SwiperContainer>
           <Slider {...sliderSettings}>
-            <div>Slide 1</div>
-            <div>Slide 2</div>
-            <div>Slide 3</div>
+            <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
+            <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
+            <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
           </Slider>
           </SwiperContainer>
           <br />
