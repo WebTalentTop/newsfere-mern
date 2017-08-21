@@ -116,7 +116,6 @@ exports.voteArticle = function (req, res, next) {
     articleCounterToSave.usersRead = usersRead;
     articleCounterToSave.usersVotedSensational = usersVotedSensational;
     articleCounterToSave.usersVotedFactual = usersVotedFactual;
-
     ArticleCounter.update({ articleID: article._id }, articleCounterToSave, { upsert: true },
       (error, found) => {
       });
@@ -152,18 +151,34 @@ exports.voteArticle = function (req, res, next) {
         }
       } else { // If it's for updaing voting Result
         const posUserSensational = userInfo.articlesVotedSensational.indexOf(article._id);
-        const posUserFactual = userInfo.articlesVotedFactual.indexOf(article._id);        
-        if (article.voted > 0 && posUserSensational >= 0) {
-          userInfo.articlesVotedSensational.splice(posUserSensational);
-          userInfo.articlesVotedFactual.push(article._id);
+        const posUserFactual = userInfo.articlesVotedFactual.indexOf(article._id);
+        if (article.voted > 0) {
+          if (posUserSensational >= 0) {
+            userInfo.articlesVotedSensational.splice(posUserSensational);
+            userInfo.articlesVotedFactual.push(article._id);
+            userInfo.totalNumberFactualVotes += 1;
+            userInfo.totalNumberSensationalVotes -= 1;
+          } else if (posUserFactual < 0) {
+            userInfo.articlesVotedFactual.push(article._id);
+            userInfo.totalNumberFactualVotes += 1;
+          }
         }
-        if (article.voted < 0 && posUserFactual >= 0) {
-          userInfo.articlesVotedFactual.splice(posUserFactual);
-          userInfo.articlesVotedSensational.push(article._id);
+        if (article.voted < 0) {
+          if (posUserFactual >= 0) {
+            userInfo.articlesVotedFactual.splice(posUserFactual);
+            userInfo.articlesVotedSensational.push(article._id);
+            userInfo.totalNumberFactualVotes -= 1;
+            userInfo.totalNumberSensationalVotes += 1;
+          } else if (posUserSensational < 0) {
+            userInfo.articlesVotedSensational.push(article._id);
+            userInfo.totalNumberSensationalVotes += 1;
+          }
         }
       }
       userInfo.totalNumberViews = userInfo.articlesRead.length;
       userInfo.totalNumberVotes = userInfo.articlesVoted.length;
+      userInfo.totalNumberSensationalVotes = userInfo.articlesVotedSensational.length;
+      userInfo.totalNumberFactualVotes = userInfo.articlesVotedFactual.length;
     }
     User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
     });
@@ -185,7 +200,6 @@ exports.getReadVoted = function (req, res, next) {
               singleArticle.votingResult = 1;
             else singleArticle.votingResult = -1;
             singleArticle = setArticleInfo(singleArticle);
-            console.log(singleArticle);
             articlesToReturn.push(singleArticle);
             if (readCount === foundUser.articlesRead.length) {
               return res.status(200).json({ articles: articlesToReturn });
@@ -195,5 +209,6 @@ exports.getReadVoted = function (req, res, next) {
       }
     }
   });
-}
+};
+
 
