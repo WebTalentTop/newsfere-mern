@@ -39,7 +39,6 @@ exports.getArticles = function (req1, res1, next) {
     // This is where the action is!
     const stream = this; // `this` is `feedparser`, which is a stream
     let item = stream.read();
-    console.log(item.description);
     while (item) {
       const pubInfo = item['rss:pubdate'];
       let pubDate;
@@ -73,7 +72,6 @@ exports.getArticles = function (req1, res1, next) {
       item = stream.read();
     }
     if (count === 40) {
-      console.log(articlesToReturn);
       return res1.status(200).json({ articles: articlesToReturn }); 
     }
   });
@@ -97,14 +95,14 @@ exports.voteArticle = function (req, res, next) {
       usersVotedSensational = foundArticleCounter.usersVotedSensational;
       usersVotedFactual = foundArticleCounter.usersVotedFactual;
       if (posUserRead < 0) usersRead.push(user._id);
-      if (posUserSensational < 0 && article.voted === false) {
+      if (posUserSensational < 0 && article.voted < 0) {
         usersVotedSensational.push(user._id);
-      } else if (posUserSensational >= 0 && article.voted === true) {
+      } else if (posUserSensational >= 0 && article.voted > 0) {
         usersVotedSensational.splice(posUserSensational);
       }
-      if (posUserFactual < 0 && article.voted === true) {
+      if (posUserFactual < 0 && article.voted > 0) {
         usersVotedFactual.push(user._id);
-      } else if (posUserFactual >= 0 && article.voted === false) {
+      } else if (posUserFactual >= 0 && article.voted < 0) {
         usersVotedFactual.splice(posUserFactual);
       }
       articleCounterToSave = foundArticleCounter;
@@ -112,7 +110,7 @@ exports.voteArticle = function (req, res, next) {
       // The article never viewed or voted
       articleCounterToSave.articleID = article._id;
       usersRead.push(user._id);
-      if (article.voted === true) usersVotedFactual.push(user._id);
+      if (article.voted > 0) usersVotedFactual.push(user._id);
       else usersVotedSensational.push(user._id);
     }
     articleCounterToSave.usersRead = usersRead;
@@ -138,16 +136,29 @@ exports.voteArticle = function (req, res, next) {
     let userInfo = {};
     if (foundUser !== null) {
       userInfo = foundUser;
+      // Push Article if it doesn't exist
       if (userInfo.articlesRead.indexOf(article._id) < 0) {
         userInfo.articlesRead.push(article._id);
       }
+      // If it's newly voted
       if (userInfo.articlesVoted.indexOf(article._id) < 0) {
         userInfo.articlesVoted.push(article._id);
-        if (article.voted === true) {
+        if (article.voted > 0) {
           userInfo.totalNumberFactualVotes += 1;
           userInfo.articlesVotedFactual.push(article._id);
         } else {
           userInfo.totalNumberSensationalVotes += 1;
+          userInfo.articlesVotedSensational.push(article._id);
+        }
+      } else { // If it's for updaing voting Result
+        const posUserSensational = userInfo.articlesVotedSensational.indexOf(article._id);
+        const posUserFactual = userInfo.articlesVotedFactual.indexOf(article._id);        
+        if (article.voted > 0 && posUserSensational >= 0) {
+          userInfo.articlesVotedSensational.splice(posUserSensational);
+          userInfo.articlesVotedFactual.push(article._id);
+        }
+        if (article.voted < 0 && posUserFactual >= 0) {
+          userInfo.articlesVotedFactual.splice(posUserFactual);
           userInfo.articlesVotedSensational.push(article._id);
         }
       }
@@ -168,12 +179,13 @@ exports.getReadVoted = function (req, res, next) {
         foundUser.articlesRead.forEach((singleArticleID) => {
           Article.findById(singleArticleID, (err, foundArticle) => {
             let singleArticle = foundArticle;
-            singleArticle.result = 0;
+            singleArticle.votingResult = 0;
             readCount += 1;
             if (foundUser.articlesVotedFactual.indexOf(singleArticleID) > 0)
-              singleArticle.result = 1;
-            else singleArticle.result = -1;
+              singleArticle.votingResult = 1;
+            else singleArticle.votingResult = -1;
             singleArticle = setArticleInfo(singleArticle);
+            console.log(singleArticle);
             articlesToReturn.push(singleArticle);
             if (readCount === foundUser.articlesRead.length) {
               return res.status(200).json({ articles: articlesToReturn });

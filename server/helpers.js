@@ -23,7 +23,7 @@ exports.setArticleInfo = function setArticleInfo(request) {
     description: request.description,
     pubdate: request.pubdate,
     link: request.link,
-    result: request.result,
+    votingResult: request.votingResult,
     mediaImageURL: request.mediaImageURL
   };
 
