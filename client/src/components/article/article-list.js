@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import cookie from 'react-cookie';
-import SwitchButton from 'react-switch-button';
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import Modal from '../template/modal';
@@ -81,7 +80,6 @@ class ArticleList extends Component {
   state = {
     isModalOpen: false,
     selectedArticle: {},
-    isToggled: false,
     votingResult: 0,
   }
   componentWillMount() {
@@ -101,13 +99,9 @@ class ArticleList extends Component {
     const encodedString = Base64.encode(str);
     return encodedString;
   }
-  handleSwitch = () => {
-    this.setState({ isToggled: !this.state.isToggled });
-  }
   OnVote = () => {
-    const { selectedArticle, isToggled, votingResult } = this.state;
+    const { selectedArticle, votingResult } = this.state;
     const user = cookie.load('user'); 
-    console.log(votingResult);
     const votedArticle = {
       profile: user,
       _id: this.helperEncoding(selectedArticle.title),
@@ -124,7 +118,7 @@ class ArticleList extends Component {
   }
   render() {
     const { articles } = this.props;
-    const { isModalOpen, selectedArticle, isToggled, votingResult } = this.state;
+    const { isModalOpen, selectedArticle, votingResult } = this.state;
     const sliderSettings = {
       infinite: false,
       speed: 500,
@@ -157,24 +151,17 @@ class ArticleList extends Component {
           <div> { selectedArticle.summary } <br /></div>
           <div> { selectedArticle.description } <br /></div>
           <br />
-          <SwitchButton 
-            name="switch-8"
-            label="Switch mode"
-            mode="select"
-            labelRight="Factual"
-            labelLeft="Sensationalized"
-            onChange={this.handleSwitch}
-          />
           <SwiperContainer>
-          <Slider {...sliderSettings}>
-            <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
-            <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
-            <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
-          </Slider>
+            <Slider {...sliderSettings}>
+              <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
+              <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
+              <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
+            </Slider>
           </SwiperContainer>
           <br />
           <br />
           <button onClick={this.OnVote}>Vote now </button>
+          <button onClick={this.closeModal}>Cancel </button>
         </Modal>
       </div>
     );
