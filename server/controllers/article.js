@@ -125,7 +125,7 @@ exports.voteArticle = function (req, res, next) {
       articleToSave.totalNumberViews = usersRead.length;
       articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
       articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
-      articleToSave.totalNumberVotes =
+      articleToSave.totalNumberVotes = usersVotedSensational.length + usersVotedFactual.length;
       parseInt(usersVotedFactual.length + usersVotedSensational.length, 10);
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
