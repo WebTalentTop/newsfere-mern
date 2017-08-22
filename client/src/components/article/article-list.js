@@ -25,15 +25,26 @@ const ArticleItem = styled.div`{
   & > .articleInfo {
     display: flex;
     padding: 5px;
+    color: #888;
     justify-content: space-between;
+    & > div > .super-crazy-colors {
+      color: #888;
+      font-size: 13px;
+      textShadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      margin-right: 7px;
+    }
+  }
+  & > .articleCaption {
+    padding: 5px;
     & > .caption {
       color: #444;
       font-weight: bold;
       padding-right: 10px
     }
     & > .pubDate {
-      color: #888;
-      font-size: 12px;
+      color: #b5b5b5;
+      padding-top: 2px;
+      font-size: 11px;
     }
   }
 }
@@ -146,7 +157,7 @@ class ArticleList extends Component {
               <div className='imgContainer'>
                 <img src={article.mediaImageURL} />
               </div>
-              <div className='articleInfo'>
+              <div className='articleCaption'>
                 <div className='caption'>{article.title}</div>
                 <div className='pubDate'>{article.pubdate}</div>
               </div>

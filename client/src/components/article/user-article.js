@@ -27,15 +27,26 @@ const ArticleItem = styled.div`{
   & > .articleInfo {
     display: flex;
     padding: 5px;
+    color: #888;
     justify-content: space-between;
+    & > div > .super-crazy-colors {
+      color: #888;
+      font-size: 13px;
+      textShadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      margin-right: 7px;
+    }
+  }
+  & > .articleCaption {
+    padding: 5px;
     & > .caption {
       color: #444;
       font-weight: bold;
       padding-right: 10px
     }
     & > .pubDate {
-      color: #888;
-      font-size: 12px;
+      color: #b5b5b5;
+      padding-top: 2px;
+      font-size: 11px;
     }
   }
 }
@@ -148,41 +159,37 @@ class UserArticle extends Component {
               <div className='imgContainer'>
                 <img src={article.mediaImageURL} />
               </div>
-              <div className='articleInfo'>
+              <div className='articleCaption'>
                 <div className='caption'>{article.title}</div>
                 <div className='pubDate'>{article.pubdate}</div>
               </div>
               <div className='articleInfo'>
-                <div className='viewer'>
+                <div>
                   <FontAwesome
                     className='super-crazy-colors'
                     name='eye'
-                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
                   />
                   {article.totalNumberViews} 
                 </div>
-                <div className='voted'>
+                <div>
                   <FontAwesome
                     className='super-crazy-colors'
                     name='check'
-                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
                   />
                   {article.totalNumberVotes}
                 </div>
-                <div className='viewer'>
-                  <FontAwesome
-                    className='super-crazy-colors'
-                    name={article.votingResult > 0? 'thumbs-up':'thumbs-down'}
-                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
-                  />
-                </div>
-                <div className='voted'>
+                <div>
                   <FontAwesome
                     className='super-crazy-colors'
                     name='percent'
-                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
                   />
                   {article.creditPercentage}
+                </div>
+                <div>
+                  <FontAwesome
+                    className='super-crazy-colors'
+                    name={article.votingResult > 0? 'thumbs-up':'thumbs-down'}
+                  />
                 </div>
               </div>
             </ArticleItem>
