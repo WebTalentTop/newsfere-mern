@@ -4,9 +4,9 @@ const mongoose = require('mongoose'),
 const ArticleCounterSchema = new Schema({
   _id: String,
   articleID: String,
-  usersRead: [],
-  usersVotedSensational: [],
-  usersVotedFactual: [],
+  usersRead: { type: Array, default: [] },
+  usersVotedSensational: { type: Array, default: [] },
+  usersVotedFactual: { type: Array, default: [] }
 });
 
 module.exports = mongoose.model('ArticleCounter', ArticleCounterSchema);

@@ -40,14 +40,14 @@ const UserSchema = new Schema({
   },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
-  totalNumberViews: Number,
-  totalNumberVotes: Number,
-  totalNumberSensationalVotes: Number,
-  totalNumberFactualVotes: Number,
-  articlesVoted: [],
-  articlesVotedSensational: [],
-  articlesVotedFactual: [],
-  articlesRead: []
+  totalNumberViews: { type: Number, defulat: 0 },
+  totalNumberVotes: { type: Number, defulat: 0 },
+  totalNumberSensationalVotes: { type: Number, defulat: 0 },
+  totalNumberFactualVotes: { type: Number, defulat: 0 },
+  articlesVoted: { type: Array, default: [] },
+  articlesVotedSensational: { type: Array, default: [] },
+  articlesVotedFactual: { type: Array, default: [] },
+  articlesRead: { type: Array, default: [] }
 },
   {
     timestamps: true
