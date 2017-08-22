@@ -10,6 +10,7 @@ const ArticleSchema = new Schema({
   link: String,
   contentText: String,
   mediaImageURL: String,
+  creditPercentage: { type: Number, defulat: 0 },
   totalNumberViews: { type: Number, defulat: 0 },
   totalNumberVotes: { type: Number, defulat: 0 },
   totalNumberSensationalVotes: { type: Number, defulat: 0 },

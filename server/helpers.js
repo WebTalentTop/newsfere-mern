@@ -25,6 +25,7 @@ exports.setArticleInfo = function setArticleInfo(request) {
     link: request.link,
     mediaImageURL: request.mediaImageURL,
     votingResult: request.voted,
+    creditPercentage: request.creditPercentage,
     totalNumberViews: request.totalNumberViews,
     totalNumberVotes: request.totalNumberVotes,
     totalNumberSensationalVotes: request.totalNumberSensationalVotes,

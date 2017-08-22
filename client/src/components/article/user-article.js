@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import cookie from 'react-cookie';
 import styled from 'styled-components';
 import Slider from 'react-slick';
+import FontAwesome from 'react-fontawesome';
 import Modal from '../template/modal';
 import * as actions from '../../actions/article';
 import { VOTED_PREFIX, VOTED_ARR } from './types';
@@ -119,6 +120,7 @@ class UserArticle extends Component {
       pubdate: selectedArticle.pubdate,
       mediaImageURL: selectedArticle.mediaImageURL,
       link: selectedArticle.link,
+      creditPercentage: selectedArticle.creditPercentage,
       voted: votingResult,
     };
     this.props.voteArticle(votedArticle);
@@ -151,8 +153,37 @@ class UserArticle extends Component {
                 <div className='pubDate'>{article.pubdate}</div>
               </div>
               <div className='articleInfo'>
-                <div className='viewer'>{article.totalNumberViews} Viewed</div>
-                <div className='voted'>{article.totalNumberVotes} Voted</div>
+                <div className='viewer'>
+                  <FontAwesome
+                    className='super-crazy-colors'
+                    name='eye'
+                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
+                  />
+                  {article.totalNumberViews} 
+                </div>
+                <div className='voted'>
+                  <FontAwesome
+                    className='super-crazy-colors'
+                    name='check'
+                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
+                  />
+                  {article.totalNumberVotes}
+                </div>
+                <div className='viewer'>
+                  <FontAwesome
+                    className='super-crazy-colors'
+                    name={article.votingResult > 0? 'thumbs-up':'thumbs-down'}
+                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
+                  />
+                </div>
+                <div className='voted'>
+                  <FontAwesome
+                    className='super-crazy-colors'
+                    name='percent'
+                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)', fontSize: '18px', marginRight: '10px'  }}
+                  />
+                  {article.creditPercentage}
+                </div>
               </div>
             </ArticleItem>
           </div>
