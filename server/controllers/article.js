@@ -76,10 +76,61 @@ exports.getArticles = function (req1, res1, next) {
     }
   });
 };
+exports.viewArticle = function (req, res, next) {
+  const article = req.body;
+  const user = article.profile;
+  let articleCounterToSave = {};
+  let articleToSave = {};
+  let usersRead = [];
+  let usersVotedSensational = [];
+  let usersVotedFactual = [];
+  ArticleCounter.findOne({ articleID: article._id }, (err, foundArticleCounter) => {
+    if (foundArticleCounter !== null) {
+      usersRead = foundArticleCounter.usersRead;
+      usersVotedSensational = foundArticleCounter.usersVotedSensational;
+      usersVotedFactual = foundArticleCounter.usersVotedFactual;
+      const posUserRead = usersRead.indexOf(user._id);
+      if (posUserRead < 0) usersRead.push(user._id);
+      articleCounterToSave = foundArticleCounter;
+    } else {
+      articleCounterToSave.articleID = article._id;
+      usersRead.push(user._id);
+    }
+    articleCounterToSave.usersRead = usersRead;
+    ArticleCounter.update({ articleID: article._id }, articleCounterToSave, { upsert: true },
+      (error, found) => {
+      });
+    Article.findById(article._id, (err, foundArticle) => {
+      articleToSave = setArticleInfo(article);
+      articleToSave.totalNumberViews = usersRead.length;
+      articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
+      articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
+      articleToSave.totalNumberVotes = usersVotedSensational.length + usersVotedFactual.length;
+      Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
+      });
+      User.findById(user._id, (err, foundUser) => {
+        let userInfo = {};
+        if (foundUser !== null) {
+          userInfo = foundUser;
+          // Push Article if it doesn't exist
+          if (userInfo.articlesRead.indexOf(article._id) < 0) {
+            userInfo.articlesRead.push(article._id);
+          }
+          userInfo.totalNumberViews = userInfo.articlesRead.length;
+          User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
+            return res.status(200).json({ viewedArticle: articleToSave });
+          });
+        }
+      });
+    });
+  });
+};
 exports.voteArticle = function (req, res, next) {
   const article = req.body;
   const user = article.profile;
   let articleCounterToSave = {};
+  let articleToSave = {};
+  let isUpdate = 1;
   let usersRead = [];
   let usersVotedSensational = [];
   let usersVotedFactual = [];
@@ -120,7 +171,7 @@ exports.voteArticle = function (req, res, next) {
       (error, found) => {
       });
     Article.findById(article._id, (err, foundArticle) => {
-      const articleToSave = setArticleInfo(article);
+      articleToSave = setArticleInfo(article);
       articleToSave.totalNumberViews = usersRead.length;
       articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
       articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
@@ -128,59 +179,60 @@ exports.voteArticle = function (req, res, next) {
       parseInt(usersVotedFactual.length + usersVotedSensational.length, 10);
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
-    });
-  });
-
-  User.findById(user._id, (err, foundUser) => {
-    let userInfo = {};
-    if (foundUser !== null) {
-      userInfo = foundUser;
-      // Push Article if it doesn't exist
-      if (userInfo.articlesRead.indexOf(article._id) < 0) {
-        userInfo.articlesRead.push(article._id);
-      }
-      // If it's newly voted
-      if (userInfo.articlesVoted.indexOf(article._id) < 0) {
-        userInfo.articlesVoted.push(article._id);
-        if (article.voted > 0) {
-          userInfo.totalNumberFactualVotes += 1;
-          userInfo.articlesVotedFactual.push(article._id);
-        } else {
-          userInfo.totalNumberSensationalVotes += 1;
-          userInfo.articlesVotedSensational.push(article._id);
-        }
-      } else { // If it's for updaing voting Result
-        const posUserSensational = userInfo.articlesVotedSensational.indexOf(article._id);
-        const posUserFactual = userInfo.articlesVotedFactual.indexOf(article._id);
-        if (article.voted > 0) {
-          if (posUserSensational >= 0) {
-            userInfo.articlesVotedSensational.splice(posUserSensational);
-            userInfo.articlesVotedFactual.push(article._id);
-            userInfo.totalNumberFactualVotes += 1;
-            userInfo.totalNumberSensationalVotes -= 1;
-          } else if (posUserFactual < 0) {
-            userInfo.articlesVotedFactual.push(article._id);
-            userInfo.totalNumberFactualVotes += 1;
+      User.findById(user._id, (err, foundUser) => {
+        let userInfo = {};
+        if (foundUser !== null) {
+          userInfo = foundUser;
+          // Push Article if it doesn't exist
+          if (userInfo.articlesRead.indexOf(article._id) < 0) {
+            userInfo.articlesRead.push(article._id);
           }
-        }
-        if (article.voted < 0) {
-          if (posUserFactual >= 0) {
-            userInfo.articlesVotedFactual.splice(posUserFactual);
-            userInfo.articlesVotedSensational.push(article._id);
-            userInfo.totalNumberFactualVotes -= 1;
-            userInfo.totalNumberSensationalVotes += 1;
-          } else if (posUserSensational < 0) {
-            userInfo.articlesVotedSensational.push(article._id);
-            userInfo.totalNumberSensationalVotes += 1;
+          // If it's newly voted
+          if (userInfo.articlesVoted.indexOf(article._id) < 0) {
+            isUpdate = 0;
+            userInfo.articlesVoted.push(article._id);
+            if (article.voted > 0) {
+              userInfo.totalNumberFactualVotes += 1;
+              userInfo.articlesVotedFactual.push(article._id);
+            } else {
+              userInfo.totalNumberSensationalVotes += 1;
+              userInfo.articlesVotedSensational.push(article._id);
+            }
+          } else { // If it's for updaing voting Result
+            const posUserSensational = userInfo.articlesVotedSensational.indexOf(article._id);
+            const posUserFactual = userInfo.articlesVotedFactual.indexOf(article._id);
+            if (article.voted > 0) {
+              if (posUserSensational >= 0) {
+                userInfo.articlesVotedSensational.splice(posUserSensational);
+                userInfo.articlesVotedFactual.push(article._id);
+                userInfo.totalNumberFactualVotes += 1;
+                userInfo.totalNumberSensationalVotes -= 1;
+              } else if (posUserFactual < 0) {
+                userInfo.articlesVotedFactual.push(article._id);
+                userInfo.totalNumberFactualVotes += 1;
+              }
+            }
+            if (article.voted < 0) {
+              if (posUserFactual >= 0) {
+                userInfo.articlesVotedFactual.splice(posUserFactual);
+                userInfo.articlesVotedSensational.push(article._id);
+                userInfo.totalNumberFactualVotes -= 1;
+                userInfo.totalNumberSensationalVotes += 1;
+              } else if (posUserSensational < 0) {
+                userInfo.articlesVotedSensational.push(article._id);
+                userInfo.totalNumberSensationalVotes += 1;
+              }
+            }
           }
+          userInfo.totalNumberViews = userInfo.articlesRead.length;
+          userInfo.totalNumberVotes = userInfo.articlesVoted.length;
+          userInfo.totalNumberSensationalVotes = userInfo.articlesVotedSensational.length;
+          userInfo.totalNumberFactualVotes = userInfo.articlesVotedFactual.length;
+          User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
+            return res.status(200).json({ updatedArticle: articleToSave, updateFlag: isUpdate });
+          });
         }
-      }
-      userInfo.totalNumberViews = userInfo.articlesRead.length;
-      userInfo.totalNumberVotes = userInfo.articlesVoted.length;
-      userInfo.totalNumberSensationalVotes = userInfo.articlesVotedSensational.length;
-      userInfo.totalNumberFactualVotes = userInfo.articlesVotedFactual.length;
-    }
-    User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
+      });
     });
   });
 };
@@ -188,19 +240,23 @@ exports.getReadVoted = function (req, res, next) {
   const userID = req.params.userID;
   const articlesToReturn = [];
   User.findById(userID, (err, foundUser) => {
-    if (foundUser) {
+    if (foundUser !== null) {
       if (foundUser.articlesRead) {
         let readCount = 0;
         foundUser.articlesRead.forEach((singleArticleID) => {
           Article.findById(singleArticleID, (err, foundArticle) => {
-            let singleArticle = foundArticle;
-            singleArticle.votingResult = 0;
             readCount += 1;
-            if (foundUser.articlesVotedFactual.indexOf(singleArticleID) > 0)
-              singleArticle.votingResult = 1;
-            else singleArticle.votingResult = -1;
-            singleArticle = setArticleInfo(singleArticle);
-            articlesToReturn.push(singleArticle);
+            if (foundArticle !== null) {
+              let singleArticle = foundArticle;
+              singleArticle.voted = 0;
+              if (foundUser.articlesVotedFactual.indexOf(singleArticleID) > 0) {
+                singleArticle.voted = 1;
+              } else if (foundUser.articlesVotedSensational.indexOf(singleArticleID) > 0) {
+                singleArticle.voted = -1;
+              }
+              singleArticle = setArticleInfo(singleArticle);
+              articlesToReturn.push(singleArticle);
+            }
             if (readCount === foundUser.articlesRead.length) {
               return res.status(200).json({ articles: articlesToReturn });
             }
