@@ -97,6 +97,8 @@ exports.viewArticle = function (req, res, next) {
       usersRead.push(user._id);
     }
     articleCounterToSave.usersRead = usersRead;
+    articleCounterToSave.usersVotedSensational = usersVotedSensational;
+    articleCounterToSave.usersVotedFactual = usersVotedFactual;
     ArticleCounter.update({ articleID: article._id }, articleCounterToSave, { upsert: true },
       (error, found) => {
       });
@@ -118,7 +120,6 @@ exports.viewArticle = function (req, res, next) {
           }
           userInfo.totalNumberViews = userInfo.articlesRead.length;
           User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
-            return res.status(200).json({ viewedArticle: articleToSave });
           });
         }
       });
@@ -134,6 +135,7 @@ exports.voteArticle = function (req, res, next) {
   let usersRead = [];
   let usersVotedSensational = [];
   let usersVotedFactual = [];
+  let creditPercentage = 0;
   // Article Couter Store
   ArticleCounter.findOne({ articleID: article._id }, (err, foundArticleCounter) => {
 
@@ -176,7 +178,10 @@ exports.voteArticle = function (req, res, next) {
       articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
       articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
       articleToSave.totalNumberVotes = usersVotedSensational.length + usersVotedFactual.length;
-      parseInt(usersVotedFactual.length + usersVotedSensational.length, 10);
+      if (usersRead.length > 0) {
+        creditPercentage = (usersVotedFactual.length / articleToSave.totalNumberVotes) * 100;
+      }
+      articleToSave.creditPercentage = creditPercentage;
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
       User.findById(user._id, (err, foundUser) => {
@@ -185,17 +190,14 @@ exports.voteArticle = function (req, res, next) {
           userInfo = foundUser;
           // Push Article if it doesn't exist
           if (userInfo.articlesRead.indexOf(article._id) < 0) {
+            isUpdate = 0;
             userInfo.articlesRead.push(article._id);
           }
           // If it's newly voted
           if (userInfo.articlesVoted.indexOf(article._id) < 0) {
-            isUpdate = 0;
-            userInfo.articlesVoted.push(article._id);
             if (article.voted > 0) {
-              userInfo.totalNumberFactualVotes += 1;
               userInfo.articlesVotedFactual.push(article._id);
             } else {
-              userInfo.totalNumberSensationalVotes += 1;
               userInfo.articlesVotedSensational.push(article._id);
             }
           } else { // If it's for updaing voting Result
@@ -205,29 +207,24 @@ exports.voteArticle = function (req, res, next) {
               if (posUserSensational >= 0) {
                 userInfo.articlesVotedSensational.splice(posUserSensational);
                 userInfo.articlesVotedFactual.push(article._id);
-                userInfo.totalNumberFactualVotes += 1;
-                userInfo.totalNumberSensationalVotes -= 1;
               } else if (posUserFactual < 0) {
                 userInfo.articlesVotedFactual.push(article._id);
-                userInfo.totalNumberFactualVotes += 1;
               }
             }
             if (article.voted < 0) {
               if (posUserFactual >= 0) {
                 userInfo.articlesVotedFactual.splice(posUserFactual);
                 userInfo.articlesVotedSensational.push(article._id);
-                userInfo.totalNumberFactualVotes -= 1;
-                userInfo.totalNumberSensationalVotes += 1;
               } else if (posUserSensational < 0) {
                 userInfo.articlesVotedSensational.push(article._id);
-                userInfo.totalNumberSensationalVotes += 1;
               }
             }
           }
+          userInfo.articlesVoted = userInfo.articlesVotedFactual.concat(userInfo.articlesVotedSensational);
           userInfo.totalNumberViews = userInfo.articlesRead.length;
-          userInfo.totalNumberVotes = userInfo.articlesVoted.length;
           userInfo.totalNumberSensationalVotes = userInfo.articlesVotedSensational.length;
           userInfo.totalNumberFactualVotes = userInfo.articlesVotedFactual.length;
+          userInfo.totalNumberVotes = userInfo.totalNumberSensationalVotes + userInfo.totalNumberFactualVotes;
           User.update({ _id: user._id }, userInfo, { upsert: true }, (error, found) => {
             return res.status(200).json({ updatedArticle: articleToSave, updateFlag: isUpdate });
           });
