@@ -45,4 +45,5 @@ export const CREATE_CUSTOMER = 'create_customer',
 export const FETCH_ARTICLES = 'fetch_articles',
   FETCH_READ_VOTED_ARTICLES = 'fetch_read_voted_articles',
   VOTE_ARTICLE = 'vote_aritcle',
+  ARTICLE_VIEWD = 'view_aritcle',
   ARTICLE_ERROR = 'article_error';
