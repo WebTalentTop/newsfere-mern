@@ -1,2 +1,1 @@
-export const VOTED_PREFIX = "You voted as ";
-export const VOTED_ARR = ['Sensationalized', 'No idea', 'Factual'];
+export const VOTED_ARR = ['You voted as Sensationalized', 'You just read it', 'You voted as Factual'];

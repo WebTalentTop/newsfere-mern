@@ -90,6 +90,17 @@ class ArticleList extends Component {
     this.setState({ isModalOpen: true });
     const articleTemp = Object.assign({}, article);
     this.setState({ selectedArticle: articleTemp });
+    const user = cookie.load('user');
+    const viewedArticle = {
+      profile: user,
+      _id: this.helperEncoding(article.title),
+      title: article.title,
+      pubdate: article.pubdate,
+      mediaImageURL: article.mediaImageURL,
+      link: article.link,
+      voted: 0,
+    };
+    this.props.viewArticle(viewedArticle);
   }
   closeModal = () => {
     this.setState({ isModalOpen: false });
@@ -111,6 +122,7 @@ class ArticleList extends Component {
       link: selectedArticle.link,
       voted: votingResult
     }
+    if (votingResult !== 0)
     this.props.voteArticle(votedArticle);
   }
   afterChange = (cur) => {
@@ -148,7 +160,6 @@ class ArticleList extends Component {
         <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading="Voting">
           <div> { selectedArticle.title } <br /></div>
           <div> { selectedArticle.pubdate } <br /></div>
-          <div> { selectedArticle.summary } <br /></div>
           <div> { selectedArticle.description } <br /></div>
           <br />
           <SwiperContainer>
@@ -171,7 +182,6 @@ class ArticleList extends Component {
 function mapStateToProps(state) {
   return {
     articles: state.article.articles,
-    profile: state.user.profile,
   };
 }
 

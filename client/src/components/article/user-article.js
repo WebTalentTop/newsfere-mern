@@ -80,9 +80,9 @@ class UserArticle extends Component {
   state = {
     isModalOpen: false,
     selectedArticle: {},
-    votingResult: 0,
+    votingResult: -1,
   }
-  componentWillMount() {
+  componentDidMount() {
     // Fetch user data prior to component mounting
     const user = cookie.load('user');
     this.props.fetchReadVotedArticles(user._id);
@@ -90,10 +90,16 @@ class UserArticle extends Component {
   openModal = (article) => {
     const { articles } = this.props;
     this.setState({ isModalOpen: true });
-    this.setState({ votingResult: article.votingResult });
+    if (article.votingResult > 0) {
+      this.setState({ votingResult: 1 });
+    } else {
+      this.setState({ votingResult: -1 });
+    }
     const articleTemp = Object.assign({}, article);
     this.setState({ selectedArticle: articleTemp });
-    this.slider.slickGoTo(article.votingResult + 1);
+    let sliderTemp = 0;
+    if (article.votingResult === 1) sliderTemp = 1;
+    this.slider.slickGoTo(sliderTemp);
   }
   closeModal = () => {
     this.setState({ isModalOpen: false });
@@ -118,7 +124,9 @@ class UserArticle extends Component {
     this.props.voteArticle(votedArticle);
   }
   afterChange = (cur) => {
-    this.setState({ votingResult: cur-1 });
+    let voteTemp = -1
+    if (cur == 1) voteTemp = 1; 
+    this.setState({ votingResult: voteTemp });
   }
   render() {
     const { articles } = this.props;
@@ -127,11 +135,10 @@ class UserArticle extends Component {
       infinite: false,
       speed: 500,
       slidesToShow: 1,
-      initialSlide: 2,
       slidesToScroll: 1,
       afterChange: this.afterChange,
     };
-    const votingMonitor = VOTED_PREFIX + VOTED_ARR[selectedArticle.votingResult + 1];
+    const votingMonitor = VOTED_ARR[selectedArticle.votingResult + 1];
     const articleList = articles.map((article, index) => {
       return (
           <div className="col-sm-4" onClick={()=> this.openModal(article)}>
@@ -157,14 +164,12 @@ class UserArticle extends Component {
         <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading="Voting">
           <div> { selectedArticle.title } <br /></div>
           <div> { selectedArticle.pubdate } <br /></div>
-          <div> { selectedArticle.summary } <br /></div>
           <div> { selectedArticle.description } <br /></div>
           <div> { votingMonitor }<br /></div>
           <br />
           <SwiperContainer>
             <Slider {...sliderSettings} ref={(c) => { this.slider = c; }}>
               <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
-              <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
               <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
             </Slider>
           </SwiperContainer>
@@ -181,7 +186,6 @@ class UserArticle extends Component {
 function mapStateToProps(state) {
   return {
     articles: state.article.userArticles,
-    profile: state.user.profile,
   };
 }
 

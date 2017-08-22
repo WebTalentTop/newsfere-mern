@@ -24,7 +24,7 @@ exports.setArticleInfo = function setArticleInfo(request) {
     pubdate: request.pubdate,
     link: request.link,
     mediaImageURL: request.mediaImageURL,
-    votingResult: request.votingResult,
+    votingResult: request.voted,
     totalNumberViews: request.totalNumberViews,
     totalNumberVotes: request.totalNumberVotes,
     totalNumberSensationalVotes: request.totalNumberSensationalVotes,
