@@ -18,12 +18,12 @@
     &-content {
       box-sizing: border-box;
       background-color: #fefefe;
-      padding: 20px;
-      width: 450px;
+      padding: 30px;
+      width: 800px;
       position: absolute;
       top: 20%;
       left: 50%;
-      margin-left: -225px;
+      margin-left: -400px;
       border: none;
       -webkit-box-shadow: 1px 1px 20px 0px rgba(150, 150, 150, 1);
       -moz-box-shadow:    1px 1px 20px 0px rgba(150, 150, 150, 1);
@@ -32,7 +32,9 @@
         display: flex;
         justify-content: space-between;
         h3 {
+          width: 80%;
           margin-top: 0;
+          margin-bottom: 15px;
         }
       }
       .close {

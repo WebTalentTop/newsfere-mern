@@ -50,19 +50,37 @@ const ArticleItem = styled.div`{
 }
 `;
 const SwiperContainer = styled.div`{
-    width: 410px;
+    width: 380px;
     text-align: center;
+    margin-left: -10px;
     color: white;
   }
 `;
+const ModalFlexContainer = styled.div`{
+      display: flex;
+      justify-content: space-between;
+      & > .flexHalf {
+        width: calc(50% - 10px);
+        & > img {
+          width: 100%;
+          border-radius: 6px;
+        }
+      }
+      & .pubDate {
+        color: #b5b5b5;
+        padding-top: 2px;
+        font-size: 13px;
+      }
+    }
+`;
 const BoardSlider = styled.div`{
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 300;
     letter-spacing: 1px;
-    padding:  10px;
+    padding: 10px;
     & > div {
-      padding: 20px;
+      padding:  10px;
       border-radius: 4px;
       cursor: pointer;
     }
@@ -168,21 +186,29 @@ class ArticleList extends Component {
     return (
       <div className="row">
         { articleList }
-        <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading="Voting">
-          <div> { selectedArticle.title } <br /></div>
-          <div> { selectedArticle.pubdate } <br /></div>
-          <div> { selectedArticle.description } <br /></div>
-          <br />
-          <SwiperContainer>
-            <Slider {...sliderSettings}>
-              <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
-              <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
-              <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
-            </Slider>
-          </SwiperContainer>
-          <br />
-          <br />
-          <button onClick={this.OnVote}>Vote now </button>
+        <Modal isOpen={isModalOpen} closeModal={this.closeModal} heading={ selectedArticle.title }>
+          <ModalFlexContainer>
+            <div className="flexHalf">
+              <div className="pubDate"> { selectedArticle.pubdate } <br /></div>
+              <div> { selectedArticle.description } <br /></div>
+              <br />
+              <SwiperContainer>
+                <Slider {...sliderSettings}>
+                  <BoardSlider><div className="SensationalizedBoard">Sensationalized</div></BoardSlider>
+                  <BoardSlider><div className="NotVotedBoard">No idea</div></BoardSlider>
+                  <BoardSlider><div className="FactualBoard">Factual</div></BoardSlider>
+                </Slider>
+              </SwiperContainer>
+              <br />
+              <br />
+            </div>
+            <div className="flexHalf">
+              <img src={ selectedArticle.mediaImageURL } />
+            </div>
+          </ModalFlexContainer>
+
+          <button onClick={this.OnVote}>Vote now</button>
+          <button><a href={ selectedArticle.link } target="_blank">Original Post</a></button>
           <button onClick={this.closeModal}>Cancel </button>
         </Modal>
       </div>
