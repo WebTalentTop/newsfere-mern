@@ -146,6 +146,8 @@ class ArticleList extends Component {
       profile: user,
       _id: this.helperEncoding(selectedArticle.title),
       title: selectedArticle.title,
+      description: selectedArticle.description,
+      summary: selectedArticle.summary,
       pubdate: selectedArticle.pubdate,
       mediaImageURL: selectedArticle.mediaImageURL,
       link: selectedArticle.link,
@@ -190,7 +192,7 @@ class ArticleList extends Component {
           <ModalFlexContainer>
             <div className="flexHalf">
               <div className="pubDate"> { selectedArticle.pubdate } <br /></div>
-              <div> { selectedArticle.description } <br /></div>
+              <div> { selectedArticle.summary } <br /></div>
               <br />
               <SwiperContainer>
                 <Slider {...sliderSettings}>
