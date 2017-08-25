@@ -6,7 +6,7 @@ import Slider from 'react-slick';
 import FontAwesome from 'react-fontawesome';
 import Modal from '../template/modal';
 import * as actions from '../../actions/article';
-import { VOTED_PREFIX, VOTED_ARR } from './types';
+import { VOTE_NOW, VOTE_AGAIN, VOTED_ARR } from './types';
 
 const ArticleItem = styled.div`{
   border-radius: 6px;
@@ -131,7 +131,6 @@ class UserArticle extends Component {
     let sliderTemp = 0;
     if (article.votingResult === 1) sliderTemp = 1;
     this.slider.slickGoTo(sliderTemp);
-    console.log(article);
   }
   closeModal = () => {
     this.setState({ isModalOpen: false });
@@ -164,6 +163,8 @@ class UserArticle extends Component {
   render() {
     const { articles } = this.props;
     const { isModalOpen, selectedArticle } = this.state;
+    let VOTE_BUTTON_LABEL = 'Vote Again';
+    if (selectedArticle.votingResult == 0) VOTE_BUTTON_LABEL = "Vote Now"
     const sliderSettings = {
       infinite: false,
       speed: 500,
@@ -240,7 +241,7 @@ class UserArticle extends Component {
               <img src={ selectedArticle.mediaImageURL } />
             </div>
           </ModalFlexContainer>
-          <button onClick={this.OnVote}>Vote again </button>
+          <button onClick={this.OnVote}>{VOTE_BUTTON_LABEL}</button>
           <button><a href={ selectedArticle.link } target="_blank">Original Post</a></button>
           <button onClick={this.closeModal}>Cancel </button>
         </Modal>

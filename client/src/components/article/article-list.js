@@ -124,6 +124,8 @@ class ArticleList extends Component {
       profile: user,
       _id: this.helperEncoding(article.title),
       title: article.title,
+      description: article.description,
+      summary: article.summary,
       pubdate: article.pubdate,
       mediaImageURL: article.mediaImageURL,
       link: article.link,
