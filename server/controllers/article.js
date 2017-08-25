@@ -84,6 +84,7 @@ exports.viewArticle = function (req, res, next) {
   let usersRead = [];
   let usersVotedSensational = [];
   let usersVotedFactual = [];
+  let creditPercentage = 0;
   ArticleCounter.findOne({ articleID: article._id }, (err, foundArticleCounter) => {
     if (foundArticleCounter !== null) {
       usersRead = foundArticleCounter.usersRead;
@@ -108,6 +109,10 @@ exports.viewArticle = function (req, res, next) {
       articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
       articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
       articleToSave.totalNumberVotes = usersVotedSensational.length + usersVotedFactual.length;
+      if (articleToSave.totalNumberVotes > 0) {
+        creditPercentage = (usersVotedFactual.length / articleToSave.totalNumberVotes) * 100;
+      }
+      articleToSave.creditPercentage = creditPercentage;
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
       User.findById(user._id, (err, foundUser) => {
@@ -178,7 +183,7 @@ exports.voteArticle = function (req, res, next) {
       articleToSave.totalNumberSensationalVotes = usersVotedSensational.length;
       articleToSave.totalNumberFactualVotes = usersVotedFactual.length;
       articleToSave.totalNumberVotes = usersVotedSensational.length + usersVotedFactual.length;
-      if (usersRead.length > 0) {
+      if (articleToSave.totalNumberVotes > 0) {
         creditPercentage = (usersVotedFactual.length / articleToSave.totalNumberVotes) * 100;
       }
       articleToSave.creditPercentage = creditPercentage;
