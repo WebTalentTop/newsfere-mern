@@ -46,4 +46,5 @@ export const FETCH_ARTICLES = 'fetch_articles',
   FETCH_READ_VOTED_ARTICLES = 'fetch_read_voted_articles',
   VOTE_ARTICLE = 'vote_aritcle',
   ARTICLE_VIEWD = 'view_aritcle',
+  VOTE_CHART = 'vote_chart',
   ARTICLE_ERROR = 'article_error';
