@@ -4,6 +4,7 @@
 const Article = require('../models/article');
 const User = require('../models/user');
 const ArticleCounter = require('../models/articleCounter');
+const UserVoteDate = require('../models/userVoteDate');
 const setArticleInfo = require('../helpers').setArticleInfo;
 
 exports.getArticles = function (req1, res1, next) {
@@ -115,6 +116,10 @@ exports.viewArticle = function (req, res, next) {
       articleToSave.creditPercentage = creditPercentage;
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
+      // const userDateToSave = {};
+      // userDateToSave.firstViewDate = Date.now;
+      // UserVoteDate.update({ userID: user._id, articleID: article._id }, userDateToSave, { upsert: true }, (error, found) => {
+      // });
       User.findById(user._id, (err, foundUser) => {
         let userInfo = {};
         if (foundUser !== null) {
@@ -188,6 +193,17 @@ exports.voteArticle = function (req, res, next) {
       }
       articleToSave.creditPercentage = creditPercentage;
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
+      });
+      const userDateToSave = {};
+      userDateToSave.articleID = article._id;
+      userDateToSave.userID = user._id;
+      userDateToSave.voteUpdateDate = new Date();
+      userDateToSave.votingResult = articleToSave.votingResult;
+      UserVoteDate.update({
+        userID: user._id, articleID: article._id },
+        userDateToSave, { upsert: true },
+        (error, found) => {
+          console.log(found);
       });
       User.findById(user._id, (err, foundUser) => {
         let userInfo = {};
@@ -268,5 +284,9 @@ exports.getReadVoted = function (req, res, next) {
     }
   });
 };
-
+exports.getChartInfo = function (req, res, next) {
+  const userID = req.params.userID;
+  const ChartInfoToReturn = ['1'];
+  return res.status(200).json({ chartInfo: ChartInfoToReturn });
+};
 
