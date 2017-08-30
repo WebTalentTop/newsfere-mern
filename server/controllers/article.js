@@ -212,9 +212,9 @@ exports.voteArticle = function (req, res, next) {
             votingResultList[articlePos] = articleToSave.votingResult;
           }
         } else {
-            articleList.push(article._id);
-            votedDateList.push(new Date());
-            votingResultList.push(articleToSave.votingResult);
+          articleList.push(article._id);
+          votedDateList.push(new Date());
+          votingResultList.push(articleToSave.votingResult);
         }
         const userVoteDateToSave = {};
         userVoteDateToSave.userID = user._id;
