@@ -334,10 +334,8 @@ exports.getVoteTimeChartInfo = function (req, res, next) {
           totalVotes[arrPos] += 1;
           if (foundUserDateInfo.votingResultList[index] > 0) {
             factualVotes[arrPos] += 1;
-            sensationalVotes[arrPos] = 0;
           } else {
             sensationalVotes[arrPos] += 1;
-            factualVotes[arrPos] = 0;
           }
         }
       });
