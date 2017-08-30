@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import cookie from 'react-cookie';
 import styled from 'styled-components';
-import {Line} from 'react-chartjs-2';
+import { Line, Bar, Radar } from 'react-chartjs-2';
 import * as actions from '../../actions/article';
 
 
@@ -83,7 +83,12 @@ class VoteChart extends Component {
       ]
     };
     return (
+      <div>
         <div><Line data={chartOption} /></div>
+        <div><Bar data={chartOption} /></div>
+        <div><Radar data={chartOption} /></div>
+        
+      </div>
     )
   }
 }
