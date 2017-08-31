@@ -126,7 +126,7 @@ module.exports = function (app) {
   articleRoute.put('/vote', requireAuth, ArticleController.voteArticle);
   articleRoute.put('/view', requireAuth, ArticleController.viewArticle);
   articleRoute.get('/read-voted/:userID', requireAuth, ArticleController.getReadVoted);
-  articleRoute.get('/vote-chart/:userID', requireAuth, ArticleController.getChartInfo);
+  articleRoute.get('/vote-time-chart/:userID', requireAuth, ArticleController.getVoteTimeChartInfo);
 
   // Set url for API group routes
   app.use('/api', apiRoutes);
