@@ -194,16 +194,39 @@ exports.voteArticle = function (req, res, next) {
       articleToSave.creditPercentage = creditPercentage;
       Article.update({ _id: article._id }, articleToSave, { upsert: true }, (error, found) => {
       });
-      const userDateToSave = {};
-      userDateToSave.articleID = article._id;
-      userDateToSave.userID = user._id;
-      userDateToSave.voteUpdateDate = new Date();
-      userDateToSave.votingResult = articleToSave.votingResult;
-      UserVoteDate.update({
-        userID: user._id, articleID: article._id },
-        userDateToSave, { upsert: true },
-        (error, found) => {
-          console.log(found);
+      let articleList = [];
+      let votedDateList = [];
+      let votingResultList = [];
+      UserVoteDate.findOne({ userID: user._id }, (err, foundInfo) => {
+        if (foundInfo !== null) {
+          articleList = foundInfo.articleList;
+          votedDateList = foundInfo.votedDateList;
+          votingResultList = foundInfo.votingResultList;
+          const articlePos = articleList.indexOf(article._id)
+          if (articlePos < 0) {
+            articleList.push(article._id);
+            votedDateList.push(new Date());
+            votingResultList.push(articleToSave.votingResult);
+          } else {
+            votedDateList[articlePos] = new Date();
+            votingResultList[articlePos] = articleToSave.votingResult;
+          }
+        } else {
+            articleList.push(article._id);
+            votedDateList.push(new Date());
+            votingResultList.push(articleToSave.votingResult);
+        }
+        const userVoteDateToSave = {};
+        userVoteDateToSave.userID = user._id;
+        userVoteDateToSave.articleList = articleList;
+        userVoteDateToSave.votedDateList = votedDateList;
+        userVoteDateToSave.votingResultList = votingResultList;
+        UserVoteDate.update({
+          userID: user._id },
+          userVoteDateToSave, { upsert: true },
+          (error, found) => {
+            console.log(found);
+        });
       });
       User.findById(user._id, (err, foundUser) => {
         let userInfo = {};
@@ -284,9 +307,46 @@ exports.getReadVoted = function (req, res, next) {
     }
   });
 };
-exports.getChartInfo = function (req, res, next) {
-  const userID = req.params.userID;
-  const ChartInfoToReturn = ['1'];
-  return res.status(200).json({ chartInfo: ChartInfoToReturn });
+exports.getVoteTimeChartInfo = function (req, res, next) {
+  const user_id = req.params.userID;
+  const ChartInfoToReturn = {};
+  const allDates = [];
+  const totalVotes = [];
+  const factualVotes = [];
+  const sensationalVotes = [];
+  
+  UserVoteDate.findOne({ userID: user_id }, (err, foundUserDateInfo) => {
+    if (foundUserDateInfo !== null) {
+      foundUserDateInfo.votedDateList.forEach(function(singleVote, index) {
+        const currentDate = singleVote.toISOString().substring(0, 10);
+        const arrPos = allDates.indexOf(currentDate);
+        if (arrPos < 0) {
+          allDates.push(currentDate);
+          totalVotes.push(1);
+          if (foundUserDateInfo.votingResultList[index] > 0) {
+            factualVotes.push(1);
+            sensationalVotes.push(0);
+          } else {
+            sensationalVotes.push(1);
+            factualVotes.push(0);
+          }
+        } else {
+          totalVotes[arrPos] += 1;
+          if (foundUserDateInfo.votingResultList[index] > 0) {
+            factualVotes[arrPos] += 1;
+            sensationalVotes[arrPos] = 0;
+          } else {
+            sensationalVotes[arrPos] += 1;
+            factualVotes[arrPos] = 0;
+          }
+        }
+      });
+      ChartInfoToReturn.dateInfo = allDates;
+      ChartInfoToReturn.voteInfo = totalVotes;
+      ChartInfoToReturn.voteFactual = factualVotes;
+      ChartInfoToReturn.voteSensational = sensationalVotes;
+      return res.status(200).json({ chartInfo: ChartInfoToReturn });
+    }
+  });
 };
 
