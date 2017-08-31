@@ -1,6 +1,6 @@
 import { FETCH_ARTICLES, ERROR_RESPONSE, FETCH_READ_VOTED_ARTICLES, VOTE_ARTICLE, VOTE_CHART } from '../actions/types';
 
-const INITIAL_STATE = { articles: [], userArticles: [], message: '', error: '' };
+const INITIAL_STATE = { articles: [], userArticles: [], chartInfo: {}, message: '', error: '' };
 
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {

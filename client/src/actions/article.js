@@ -18,6 +18,6 @@ export function fetchReadVotedArticles(uid) {
   return dispatch => getData(FETCH_READ_VOTED_ARTICLES, ARTICLE_ERROR, true, url, dispatch);
 }
 export function fetchArticleChartInfo(uid) {
-  const url = `/articles/vote-chart/${uid}`;
+  const url = `/articles/vote-time-chart/${uid}`;
   return dispatch => getData(VOTE_CHART, ARTICLE_ERROR, true, url, dispatch);
 }
