@@ -3,9 +3,9 @@ const mongoose = require('mongoose'),
 
 const UserVoteDateSchema = new Schema({
   userID: { type: String, unique: true },
-  articleID: { type: String, unique: true },
-  votingResult: { type: Number, default: 0 },
-  voteUpdateDate: Date
+  articleList: [],
+  votedDateList: [],
+  votingResultList: []
 });
 
 module.exports = mongoose.model('UserVoteDate', UserVoteDateSchema);
