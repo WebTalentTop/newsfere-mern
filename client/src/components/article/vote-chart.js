@@ -79,8 +79,8 @@ class VoteChart extends Component {
           pointRadius: 1,
           pointHitRadius: 10,
           data: voteSensational,
-        }
-      ]
+        },
+      ],
     };
     const chartPolarOption = {
       labels: dateInfo,

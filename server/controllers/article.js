@@ -225,8 +225,7 @@ exports.voteArticle = function (req, res, next) {
           userID: user._id },
           userVoteDateToSave, { upsert: true },
           (error, found) => {
-            console.log(found);
-        });
+          });
       });
       User.findById(user._id, (err, foundUser) => {
         let userInfo = {};
